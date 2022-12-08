@@ -1,3 +1,7 @@
+//Defining route handler callback functions for the Author model
+//All functions here have a standard form of an Expression Middleware function.
+
+//First require the Author model that is to be using to access and update data
 const Author = require("../models/author");
 
 // Display list of all Authors.
