@@ -38,4 +38,28 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+//import mongoose module
+const mongoose = require("mongoose");
+
+//import environmental variables
+require('dotenv').config();
+
+
+//encode password
+const adminPassword = encodeURIComponent(process.env.ADMIN_PASSWORD);
+
+//setup default mongoose connection
+const mongodbURL = `mongodb+srv://shengchiu:${adminPassword}@cluster0.49zwhi5.mongodb.net/?retryWrites=true&w=majority`;
+mongoose.connect(mongodbURL, { useNewUrlParser: true, useUnifiedTopology: true });
+
+
+//Get the default connection
+const db = mongoose.connection;
+
+
+//Bind connection to error event
+db.on("error", console.error.bind(console, "MongoDB connection error:"));
+
+// console.log("after db.on()");
+
 module.exports = app;
