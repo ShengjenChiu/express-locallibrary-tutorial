@@ -1,5 +1,9 @@
 //Defining route handler callback functions for the Author model
 //All functions here have a standard form of an Expression Middleware function.
+//To manage asynchronous operations in the controller functions:
+//to manage flow control:
+//to query database using model
+//to create view using pug: passing info to a view, and creating/extending template pug
 
 //First require the Author model that is to be using to access and update data
 const Author = require("../models/author");
