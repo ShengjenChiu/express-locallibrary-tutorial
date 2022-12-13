@@ -22,7 +22,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 //middleware chain
-app.use('/', indexRouter);
+app.use('/', catalogRouter);
 app.use('/users', usersRouter);
 app.use('/catalog', catalogRouter);
 
@@ -53,7 +53,8 @@ require('dotenv').config();
 const adminPassword = encodeURIComponent(process.env.ADMIN_PASSWORD);
 
 //setup default mongoose connection
-const mongodbURL = `mongodb+srv://shengchiu:${adminPassword}@cluster0.49zwhi5.mongodb.net/?retryWrites=true&w=majority`;
+//note: must include "local_library" before the "?" mark.
+const mongodbURL = `mongodb+srv://shengchiu:${adminPassword}@cluster0.49zwhi5.mongodb.net/local_library?retryWrites=true&w=majority`;
 mongoose.connect(mongodbURL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 
