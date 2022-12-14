@@ -1,13 +1,63 @@
 const Genre = require("../models/genre");
+const Book = require("../models/book");
+const async = require("async");
 
 // Display list of all Genre.
 exports.genre_list = (req, res) => {
-  res.send("NOT IMPLEMENTED: Genre list");
+  Genre.find()
+    .sort([["name", "ascending"]])
+    .exec(function (err, list_genres) {
+      if (err) {
+        return next(err);
+      }
+      // Successful, so render
+      res.render("genre_list", {
+        title: "Genre List",
+        genre_list: list_genres,
+      });
+    });
 };
 
 // Display detail page for a specific Genre.
-exports.genre_detail = (req, res) => {
-  res.send(`NOT IMPLEMENTED: Genre detail: ${req.params.id}`);
+exports.genre_detail = (req, res, next) => {
+  async.parallel(
+    {
+      //If the genre does not exist in the database (i.e. it may have been deleted)
+      //then findById() will return successfully with no results.
+      genre(callback) {
+        Genre.findById(req.params.id).exec(callback);
+      },
+
+      genre_books(callback) {
+        Book.find({ genre: req.params.id }).exec(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+
+      //If the genre does not exist in the database (i.e. it may have been deleted)
+      //then findById() will return successfully with no results.
+      //In this case we want to display a "not found" page,
+      //so we create an Error object and pass it to the next middleware function in the chain.
+      if (results.genre == null) {
+        // if return successfully with No results.
+        // so, create an Error object
+        const err = new Error("Genre not found");
+        err.status = 404;
+
+        //and pass it to the next middleware function in the chain
+        return next(err);
+      }
+      // Successful, so render
+      res.render("genre_detail", {
+        title: "Genre Detail",
+        genre: results.genre,
+        genre_books: results.genre_books,
+      });
+    }
+  );
 };
 
 // Display Genre create form on GET.
