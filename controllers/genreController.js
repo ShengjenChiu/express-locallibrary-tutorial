@@ -42,7 +42,7 @@ exports.genre_detail = (req, res, next) => {
       //In this case we want to display a "not found" page,
       //so we create an Error object and pass it to the next middleware function in the chain.
       if (results.genre == null) {
-        // if return successfully with No results.
+        // if return successfully with No results, i.e. no genre
         // so, create an Error object
         const err = new Error("Genre not found");
         err.status = 404;
