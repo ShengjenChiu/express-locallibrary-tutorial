@@ -31,7 +31,7 @@ AuthorSchema.virtual("url").get(function () {
   return `/catalog/author/${this._id}`;
 });
 
-// use fromJSDate() to import a JavaScript date string and toLocaleString() 
+// use fromJSDate() to import a JavaScript date string and toLocaleString()
 // to output the date in DATE_MED format in English
 AuthorSchema.virtual("date_of_birth_formatted").get(function () {
   return this.date_of_birth ? DateTime.fromJSDate(this.date_of_birth).toLocaleString(DateTime.DATE_MED) : '';
@@ -39,6 +39,12 @@ AuthorSchema.virtual("date_of_birth_formatted").get(function () {
 
 AuthorSchema.virtual("date_of_death_formatted").get(function () {
   return this.date_of_death ? DateTime.fromJSDate(this.date_of_death).toLocaleString(DateTime.DATE_MED) : '';
+});
+
+// use fromJSDate() to import a JavaScript date string and toLocaleString()
+// to output the date in DATE_MED format in English
+AuthorSchema.virtual("lifespan").get(function () {
+  return (this.date_of_birth ? DateTime.fromJSDate(this.date_of_birth).toLocaleString(DateTime.DATE_MED) : '') + " - " + (this.date_of_death ? DateTime.fromJSDate(this.date_of_death).toLocaleString(DateTime.DATE_MED) : '');
 });
 
 // Export model
