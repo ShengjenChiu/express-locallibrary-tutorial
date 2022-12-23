@@ -183,11 +183,71 @@ exports.genre_delete_post = (req, res, next) => {
 };
 
 // Display Genre update form on GET.
-exports.genre_update_get = (req, res) => {
-  res.send("NOT IMPLEMENTED: Genre update GET");
+exports.genre_update_get = (req, res, next) => {
+  async.parallel(
+    {
+      genre(callback) {
+        Genre.findById(req.params.id)
+          .exec(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+
+      if (results.genre == null) {
+        // No results.
+        const err = new Error("Genre not found");
+        err.status = 404;
+        return next(err);
+      }
+
+      res.render("genre_form", {
+        title: "Update Genre",
+        name: results.name,
+        genre: results.genre,
+      });
+    }
+  );
 };
 
-// Handle Genre update on POST.
-exports.genre_update_post = (req, res) => {
-  res.send("NOT IMPLEMENTED: Genre update POST");
-};
+// Handle Genre create on POST.
+exports.genre_update_post = [
+  // Validate and sanitize the name field. if the form is empty, "Genre name required" message will appear on the browser
+  body("name", "Genre name required").trim().isLength({ min: 1 }).escape(),
+
+  // Process request after validation and sanitization.
+  (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+
+    // Create a genre object with escaped and trimmed data.
+    const genre = new Genre({
+      name: req.body.name,
+      _id: req.params.id,  //with the auto-generated _id of the updating genre
+    });
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render the form again with sanitized values/error messages.
+      res.render("genre_form", {
+        title: "Update Genre",
+        genre,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+
+      // Data from form is valid.
+      Genre.findByIdAndUpdate(req.params.id, genre, {}, (err, found_genre) => {
+        if (err) {
+          return next(err);
+        }
+
+        // Genre exists, redirect to the genre detail page.
+        res.redirect(found_genre.url);
+       
+      });
+    }
+  },
+];
