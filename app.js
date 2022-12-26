@@ -54,7 +54,12 @@ const adminPassword = encodeURIComponent(process.env.ADMIN_PASSWORD);
 
 //setup default mongoose connection
 //note: must include "local_library" before the "?" mark.
-const mongodbURL = `mongodb+srv://shengchiu:${adminPassword}@cluster0.49zwhi5.mongodb.net/local_library?retryWrites=true&w=majority`;
+// Set up mongoose connection
+// const mongodbURL = `mongodb+srv://shengchiu:${adminPassword}@cluster0.49zwhi5.mongodb.net/local_library?retryWrites=true&w=majority`;
+const dev_db_url = `mongodb+srv://shengchiu:${adminPassword}@cluster0.49zwhi5.mongodb.net/local_library?retryWrites=true&w=majority`;
+const mongodbURL = process.env.MONGODB_URI || dev_db_url;
+
+
 mongoose.connect(mongodbURL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 
